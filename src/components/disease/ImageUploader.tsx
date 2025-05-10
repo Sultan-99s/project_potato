@@ -11,13 +11,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, isUploading }) 
   const [preview, setPreview] = useState<string | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0 && !isUploading) {
+    if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
       const previewUrl = URL.createObjectURL(file);
       setPreview(previewUrl);
       onUpload(file);
     }
-  }, [onUpload, isUploading]);
+  }, [onUpload]);
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
@@ -30,8 +30,19 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, isUploading }) 
 
   const resetUpload = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (preview) {
+      URL.revokeObjectURL(preview);
+    }
     setPreview(null);
   };
+
+  React.useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
 
   return (
     <div className="space-y-4">
@@ -88,7 +99,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, isUploading }) 
         {!preview ? (
           <button 
             className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center mx-auto transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={() => document.getElementById('fileInput')?.click()}
+            onClick={() => document.querySelector('input[type="file"]')?.click()}
             disabled={isUploading}
           >
             <Upload className="h-4 w-4 mr-2" />
@@ -97,7 +108,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, isUploading }) 
         ) : !isUploading ? (
           <button 
             className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center mx-auto transition-colors duration-200"
-            onClick={() => document.getElementById('fileInput')?.click()}
+            onClick={() => document.querySelector('input[type="file"]')?.click()}
           >
             <Upload className="h-4 w-4 mr-2" />
             Upload New Image
