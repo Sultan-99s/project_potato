@@ -43,23 +43,35 @@ const Chat: React.FC = () => {
     setIsLoading(true);
     
     // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "To effectively manage early blight in potatoes, I recommend rotating crops to non-solanaceous plants for 2-3 years. Remove and burn infected plant debris, and consider using fungicides containing chlorothalonil or copper at first sign of disease.",
-        "For optimal potato growth, ensure consistent watering, especially during tuber formation. Potatoes need about 1-2 inches of water per week. Avoid overwatering as it can lead to disease development.",
-        "When identifying late blight, look for dark, water-soaked spots that rapidly expand in cool, humid conditions. The underside of leaves may show white fungal growth. This requires immediate treatment with fungicides and removal of infected plants.",
-        "For natural pest control in your potato crop, consider companion planting with herbs like basil, marigolds, or nasturtiums which can repel certain insects. Neem oil can also be effective against aphids and beetles."
-      ];
-      
+    try {
+      const res = await fetch('http://localhost:3001/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt: input })
+      });
+    
+      const data = await res.json();
+    
       const botMessage: Message = {
         role: 'assistant',
-        content: responses[Math.floor(Math.random() * responses.length)],
+        content: data.reply,
         timestamp: new Date()
       };
-      
+    
       setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      const botMessage: Message = {
+        role: 'assistant',
+        content: 'Sorry, I couldn\'t process your request. Please try again later.',
+        timestamp: new Date()
+      };
+    
+      setMessages(prev => [...prev, botMessage]);
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }    
   };
 
   const formatTime = (date: Date) => {
