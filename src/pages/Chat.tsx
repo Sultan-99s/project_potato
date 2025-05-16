@@ -11,7 +11,7 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Hello! I\'m your farming assistant. How can I help you with your potato crop today?',
+      content: 'হ্যালো! আমি আপনার কৃষি সহকারী। আজ আপনার আলু ফসলে কীভাবে সাহায্য করতে পারি?',
       timestamp: new Date()
     }
   ]);

@@ -6,7 +6,7 @@ import path from 'path';
 
 
 dotenv.config();
-console.log("🔑 Loaded API Key:", process.env.OPENROUTER_API_KEY);
+// console.log("🔑 Loaded API Key:", process.env.OPENROUTER_API_KEY);
 
 
 const app = express();
@@ -23,11 +23,11 @@ app.post('/api/chat', async (req, res) => {
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'deepseek/deepseek-r1-distill-llama-70b:free',
+        model: 'meta-llama/llama-3.3-8b-instruct:free',
         messages: [
           {
             role: 'system',
-            content: 'You are an AI assistant that helps farmers diagnose and treat potato diseases. Respond in Bengali.',
+            content: 'You are an AI assistant that helps farmers diagnose and treat potato diseases. write your response in Bengali',
           },
           {
             role: 'user',
