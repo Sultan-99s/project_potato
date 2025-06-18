@@ -2,33 +2,32 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import path from 'path';
-
 
 dotenv.config();
-// console.log("🔑 Loaded API Key:", process.env.OPENROUTER_API_KEY);
-
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
-
 
 app.post('/api/chat', async (req, res) => {
   const { prompt } = req.body;
   const apiKey = process.env.OPENROUTER_API_KEY;
 
+  if (!apiKey) {
+    return res.status(500).json({ error: 'API key not found' });
+  }
+
   try {
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'meta-llama/llama-3.3-8b-instruct:free',
+        model: 'google/gemini-2.5-flash-preview-05-20',
         messages: [
           {
             role: 'system',
-            content: 'You are an AI assistant that helps farmers diagnose and treat potato diseases. write your response in Bengali',
+            content: 'You are an AI assistant that helps farmers diagnose and treat potato diseases. Write in Bengali.',
           },
           {
             role: 'user',
@@ -40,16 +39,21 @@ app.post('/api/chat', async (req, res) => {
         headers: {
           Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
+          'HTTP-Referer': 'http://localhost:3001',
         },
       }
     );
 
     const reply = response.data.choices[0].message.content;
     res.json({ reply });
-  } catch (error) {
+  } catch (error: any) {
     console.error('API Error:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Something went wrong' });
+    res.status(500).json({ error: 'Failed to get response from AI' });
   }
+});
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
 });
 
 app.listen(PORT, () => {
