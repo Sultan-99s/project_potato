@@ -23,12 +23,30 @@ app.post('/api/chat', async (req, res) => {
     const response = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'google/gemini-2.5-flash-preview-05-20',
+        model: 'deepseek/deepseek-chat-v3-0324:free',
         messages: [
           {
-            role: 'system',
-            content: 'You are an AI assistant that helps farmers diagnose and treat potato diseases. Write in Bengali.',
-          },
+  role: 'system',
+  content: `আপনি একজন অভিজ্ঞ কৃষি পরামর্শদাতা, যিনি বাংলায় পরামর্শ দেন। আপনার উত্তরটি সুন্দরভাবে ফরম্যাট করে দিন। নিচের স্ট্রাকচারে উত্তর দিন:
+
+🌱 রোগের নাম:
+- রোগটির সম্ভাব্য নাম লিখুন।
+
+🧪 লক্ষণ:
+- রোগের সাধারণ লক্ষণগুলো বলুন।
+
+🧬 কারণ:
+- রোগটি কী কারণে হয়ে থাকে?
+
+💊 প্রতিকার:
+- কী করতে হবে?
+- ছত্রাকনাশকের নাম দিন।
+
+⚠️ পরামর্শ:
+- ভবিষ্যতে কীভাবে প্রতিরোধ করা যায়?
+
+write in short and concise sentences, use bullet points for clarity.`,
+},
           {
             role: 'user',
             content: prompt,
